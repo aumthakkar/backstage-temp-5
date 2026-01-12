@@ -26,7 +26,7 @@ ingress:
     - host: ${{ values.app_name }}-${{ values.app_env }}.test.com
       paths:
         - path: /
-          pathType: ImplementationSpecific
+          pathType: Prefix
   tls: []
 resources: {}
 livenessProbe:
