@@ -70,12 +70,7 @@ jobs:
 
                     if argocd get app ${{ values.app_name }} >/dev/null 2>&1; then
                         echo "Deleting app: ${{ values.app_name }}"
-                        argocd app delete ${{ values.app_name }} --cascade --yes
-                        
-                        echo "Waiting for the app to completely delete..."
-                        while argocd get app ${{ values.app_name }} >/dev/null 2>&1; do
-                            sleep 5
-                        done
+                        argocd app delete ${{ values.app_name }} --cascade --yes --wait
                     fi
                     
                     argocd app create ${{ values.app_name }} \
