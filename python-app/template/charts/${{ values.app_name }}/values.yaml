@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: aumthakkar/${{ values.app_name }}
   pullPolicy: IfNotPresent
-  tag: "82b1ef"
+  tag: "${{ values.app_name }}-${{ values.app_env }}-latest"
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
