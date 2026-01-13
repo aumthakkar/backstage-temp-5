@@ -68,7 +68,13 @@ jobs:
                     REPO="https://github.com/aum-thakkar/${{ values.app_name }}.git"
                     argocd repo list ${REPO} | grep ${REPO} || argocd repo add ${REPO}
 
-                    argocd app get ${{ values.app_name }} || argocd app create ${{ values.app_name }} \
+                    if argocd get app ${{ values.app_name }} >/dev/null 2>&1; then
+                        echo "Deleting app: ${{ values.app_name }}"
+                        argocd app delete ${{ values.app_name }} --yes
+                        argocd app wait ${{ values.app_name }} --operation --timeout 120 || true
+                    fi
+                    
+                    argocd app create ${{ values.app_name }} \
                     --dest-namespace ${{ values.app_env }} \
                     --dest-server https://kubernetes.default.svc \
                     --path charts/${{ values.app_name }} \
