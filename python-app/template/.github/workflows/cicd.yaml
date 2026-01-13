@@ -65,9 +65,10 @@ jobs:
 
             -   name: ArgoCD Repo Create and Sync
                 run: |
-                    REPO="https://github.com/aum-thakkar/${{ values.app_name }}.git"
-                    argocd repo list ${REPO} | grep ${REPO} || argocd repo add ${REPO}
+                    repo="https://github.com/aum-thakkar/${{ values.app_name }}.git"
+                    argocd repo list ${repo} | grep -q ${repo} || argocd repo add ${repo}
 
+                    # Delete argocd app first if exists to start afresh
                     if argocd app get ${{ values.app_name }} >/dev/null 2>&1; then
                         echo "Deleting app: ${{ values.app_name }}"
                         argocd app delete ${{ values.app_name }} --cascade --yes --wait
@@ -78,11 +79,12 @@ jobs:
                         done
                     fi
                     
+                    # Create argocd app
                     argocd app create ${{ values.app_name }} \
                     --dest-namespace ${{ values.app_env }} \
                     --dest-server https://kubernetes.default.svc \
                     --path charts/${{ values.app_name }} \
-                    --repo ${REPO} \
+                    --repo ${repo} \
                     --revision main \
                     --sync-option CreateNamespace=true \
                     --sync-policy manual \
