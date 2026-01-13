@@ -71,13 +71,13 @@ jobs:
                     argocd app get ${{ values.app_name }} || argocd app create ${{ values.app_name }} \
                     --dest-namespace ${{ values.app_env }} \
                     --dest-server https://kubernetes.default.svc \
-                    --name ${{ values.app_name }} \
                     --path charts/${{ values.app_name }} \
                     --repo ${REPO} \
                     --revision main \
                     --sync-option CreateNamespace=true \
-                    --sync-policy manual                     
-
+                    --sync-policy manual
+                    --values values-${{values.app_env}}.yaml
+                    
                     argocd app sync ${{ values.app_name }}
                     argocd app wait ${{ values.app_name }} --timeout 120
 
