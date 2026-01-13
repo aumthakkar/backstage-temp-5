@@ -68,9 +68,14 @@ jobs:
                     REPO="https://github.com/aum-thakkar/${{ values.app_name }}.git"
                     argocd repo list ${REPO} | grep ${REPO} || argocd repo add ${REPO}
 
-                    if argocd get app ${{ values.app_name }} >/dev/null 2>&1; then
+                    if argocd app get ${{ values.app_name }} >/dev/null 2>&1; then
                         echo "Deleting app: ${{ values.app_name }}"
                         argocd app delete ${{ values.app_name }} --cascade --yes --wait
+
+                        while argocd app get ${{ values.app_name }} >/dev/null 2>&1; do
+                            echo "Waiting for argocd app: '${{ values.app_name }}' to be deleted..."
+                            sleep 2
+                        done
                     fi
                     
                     argocd app create ${{ values.app_name }} \
